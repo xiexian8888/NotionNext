@@ -65,8 +65,9 @@ export default function LazyImage({
   }
 
   useEffect(() => {
-    const adjustedImageSrc =
-      adjustImgSize(src, maxWidth) || defaultPlaceholderSrc
+    const screenWidth = (typeof window !== 'undefined' && window?.innerWidth) || maxWidth
+    const mobileWidth = screenWidth < 640 ? Math.min(screenWidth, 400) : maxWidth
+    const adjustedImageSrc = adjustImgSize(src, mobileWidth) || defaultPlaceholderSrc
 
     const observer = new IntersectionObserver(
       entries => {
@@ -85,7 +86,7 @@ export default function LazyImage({
           }
         })
       },
-      { rootMargin: '50px 0px' } // 轻微提前加载
+      { rootMargin: '200px 0px' } // 增加预加载范围，提升滚动时的流畅度
     )
     if (imageRef.current) {
       observer.observe(imageRef.current)
